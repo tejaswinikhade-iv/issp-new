@@ -1,17 +1,15 @@
-<Tabs
- defaultValue="e2e"
->
-
-<TabsList>
-
-  <TabsTrigger value="ec2">
-    AWS
-  </TabsTrigger>
-
-  <TabsTrigger value="e2e">
-    E2E Cloud
-  </TabsTrigger>
-
-</TabsList>
-
-</Tabs>
+import Link from 'next/link'
+ 
+export default function Home() {
+return (
+<div style={{ padding: '20px' }}>
+<h1>Infra Self-Service Portal</h1>
+ 
+<br />
+ 
+/e2e
+E2E Cloud Dashboard
+</Link>
+</div>
+)
+}
