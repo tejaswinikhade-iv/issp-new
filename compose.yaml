@@ -1,0 +1,12 @@
+services:
+  e2e-vm-listing:
+    image: e2e-vm-listing:latest
+    container_name: e2e-vm-listing
+
+    ports:
+      - "3000:3000"
+
+    env_file:
+      - .env.local
+
+    restart: unless-stopped

@@ -1,0 +1,8 @@
+{
+  "name": "e2e-vm-listing",
+  "version": "1.0.0",
+  "description": "E2E Cloud VM Listing",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
