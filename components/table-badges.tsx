@@ -1,23 +1,25 @@
 import { Badge } from '@/components/ui/badge'
+import { getName } from '@/lib/utils'
+import { CircleCheckIcon, LoaderIcon, PauseIcon, TrashIcon } from 'lucide-react'
 
-export function TableBadge({
-  status,
-}: {
-  status: string
-}) {
 
-  const running =
-    status.toLowerCase() === 'running'
+export function StateBadge({ state }: { state: string }) {
 
   return (
     <Badge
-      className={
-        running
-          ? 'bg-green-900 text-green-300'
-          : 'bg-yellow-900 text-yellow-300'
-      }
-    >
-      {status}
+      variant="outline"
+			className="pl-1.5 text-[0.75rem] text-neutral-700 dark:text-neutral-300"
+		>
+			{state === 'running' ? (
+				<CircleCheckIcon className="text-green-500 dark:text-green-400" />
+			) : state === 'stopped' ? (
+				<PauseIcon className="text-yellow-500 dark:text-yellow-400" />
+			) : state === 'terminated' ? (
+				<TrashIcon className="text-red-500 dark:text-red-400" />
+			) : (
+				<LoaderIcon />
+			)}
+			{state}
     </Badge>
   )
 }
