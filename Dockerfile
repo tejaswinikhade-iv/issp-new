@@ -1,16 +1,21 @@
-FROM node:20-alpine
-
-WORKDIR /app
-
-COPY package*.json ./
-
-
-RUN npm install
-
+FROM base AS builder
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
 RUN npm run build
 
-EXPOSE 3000
+FROM node:current-alpine AS runner
+ENV NODE_ENV=production
+WORKDIR /app
+RUN apk add --no-cache aws-cli curl supervisor tzdata jq yq
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/config.yml ./config.yml
 
-CMD ["npm","start"]
+# COPY supervisord.conf /etc/supervisord.conf
+COPY issp-ctl /usr/local/bin/issp-ctl
+RUN chmod +x /usr/local/bin/issp-ctl
+RUN ln -sf /usr/share/zoneinfo/$(yq ".timezone" /app/config.yml) /etc/localtime
+
+EXPOSE 3000
+# CMD ["supervisord", "-c", "/etc/supervisord.conf"]
