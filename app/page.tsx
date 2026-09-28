@@ -1,6 +1,6 @@
 'use client'
 
-// import LoadingScreen from '@/components/loading-screen'
+import LoadingScreen from '@/components/loading-screen'
 import { Button } from '@/components/ui/button'
 import VMTable from '@/components/vm-table'
 import useConfig from '@/hooks/use-config'
@@ -9,7 +9,7 @@ import useUserInfo from '@/hooks/use-user-info'
 import { getConfig } from '@/lib/config'
 // // import { type TokenResponse, useGoogleLogin } from '@react-oauth/google'
 import Image from 'next/image'
-// import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Home() {
 	const [mounted, setMounted] = useState(false)
