@@ -1,302 +1,143 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { Button } from '@/components/ui/button'
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from '@/components/ui/table'
-import {
-	flexRender,
-	getCoreRowModel,
-	getFilteredRowModel,
-	getPaginationRowModel,
-	getSortedRowModel,
-	useReactTable,
-	type ColumnDef,
-	type SortingState,
-} from '@tanstack/react-table'
-import {
-	ArrowUpDownIcon,
-	LoaderIcon,
-	RefreshCwIcon,
-} from 'lucide-react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { toast } from 'sonner'
+import DashboardCards from './dashboard-cards'
 import E2EActionButtons from './action-buttons'
 import E2ENodeDetailsSheet from './e2e-node-details-sheet'
+import { Button } from '@/components/ui/button'
+import { LoaderIcon, RefreshCwIcon, SearchIcon, MapPinIcon, ServerIcon } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
+import type { E2ENode } from '@/lib/e2e-types'
+import { getNodeName, getOwner, getStatus, isRunning, isStopped } from '@/lib/e2e-types'
 
 function StatusBadge({ status }: { status: string }) {
-	const s = (status || '').toLowerCase()
-	const color =
-		s === 'running'
-			? 'bg-green-100 text-green-800'
-			: s === 'stopped' || s === 'powered off'
-				? 'bg-red-100 text-red-800'
-				: 'bg-yellow-100 text-yellow-800'
-	return (
-		<span className={`rounded-full px-2 py-0.5 text-xs font-medium ${color}`}>
-			{status || 'unknown'}
-		</span>
-	)
-}
-
-// Reads a JSON-valued tag from an E2E node; adjust if your tag shape differs
-function readTag(node: any, key: string) {
-	const tag = (node.tags ?? []).find((t: any) => (t.key ?? t.name) === key)
-	if (!tag?.value) return undefined
-	try {
-		return JSON.parse(tag.value)
-	} catch {
-		return undefined
-	}
-}
-
-function SortHeader({ column, label }: { column: any; label: string }) {
-	return (
-		<Button
-			variant="ghost"
-			className="-ml-3 h-8"
-			onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-		>
-			{label}
-			<ArrowUpDownIcon className="ml-2 size-3.5" />
-		</Button>
-	)
+  const running = isRunning({ id: '', status })
+  const stopped = isStopped({ id: '', status })
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${running ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : stopped ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'}`}>
+      <span className="size-1.5 rounded-full bg-current" />{status || 'Unknown'}
+    </span>
+  )
 }
 
 export default function VMTable() {
-	const [nodes, setNodes] = useState<any[]>([])
-	const [loading, setLoading] = useState(true)
-	const [sorting, setSorting] = useState<SortingState>([])
-	const [globalFilter, setGlobalFilter] = useState('')
-	const [statusFilter, setStatusFilter] = useState('all')
-	const [locationFilter, setLocationFilter] = useState('all')
+  const [nodes, setNodes] = useState<E2ENode[]>([])
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [location, setLocation] = useState('all')
+  const [status, setStatus] = useState('all')
 
-	const loadNodes = useCallback(async () => {
-		setLoading(true)
-		try {
-			const res = await fetch('/api/e2e-nodes')
-			const data = await res.json()
-			if (!res.ok) throw new Error(data.error || `Failed (${res.status})`)
+  const loadNodes = useCallback(async () => {
+    setLoading(true)
+    try {
+      const response = await fetch('/api/e2e-nodes', { cache: 'no-store' })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || `Failed (${response.status})`)
+      setNodes(Array.isArray(data.nodes) ? data.nodes : [])
+      if (Array.isArray(data.errors) && data.errors.length) toast.warning('Some regions failed to load', { description: data.errors.join('\n') })
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to load E2E nodes')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
-			setNodes(data.nodes)
-			if (data.errors?.length)
-				toast.warning('Some regions failed to load', {
-					description: data.errors.join('\n'),
-				})
-		} catch (e) {
-			toast.error(e instanceof Error ? e.message : 'Failed to load nodes')
-		} finally {
-			setLoading(false)
-		}
-	}, [])
+  useEffect(() => { loadNodes() }, [loadNodes])
 
-	useEffect(() => {
-		loadNodes()
-	}, [loadNodes])
+  const locations = useMemo(() => Array.from(new Set(nodes.map((n) => n.location).filter(Boolean))).sort(), [nodes])
+  const statuses = useMemo(() => Array.from(new Set(nodes.map((n) => getStatus(n)).filter(Boolean))).sort(), [nodes])
 
-	const locations = useMemo(
-		() => Array.from(new Set(nodes.map((n) => n.location))).sort(),
-		[nodes],
-	)
-	const statuses = useMemo(
-		() => Array.from(new Set(nodes.map((n) => n.status).filter(Boolean))).sort(),
-		[nodes],
-	)
+  const filteredNodes = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    return nodes.filter((node) => {
+      const matchesSearch = !q || [getNodeName(node), node.public_ip_address, node.private_ip_address, node.location, getOwner(node), node.plan]
+        .filter(Boolean).some((value) => String(value).toLowerCase().includes(q))
+      return matchesSearch && (location === 'all' || node.location === location) && (status === 'all' || getStatus(node) === status)
+    })
+  }, [nodes, search, location, status])
 
-	const data = useMemo(
-		() =>
-			nodes.filter(
-				(n) =>
-					(statusFilter === 'all' || n.status === statusFilter) &&
-					(locationFilter === 'all' || n.location === locationFilter),
-			),
-		[nodes, statusFilter, locationFilter],
-	)
+  const regionSummary = useMemo(() => locations.map((name) => {
+    const regionNodes = nodes.filter((node) => node.location === name)
+    const healthy = regionNodes.filter(isRunning).length
+    return { name, total: regionNodes.length, healthy, percentage: regionNodes.length ? Math.round((healthy / regionNodes.length) * 100) : 0 }
+  }), [locations, nodes])
 
-	const columns = useMemo<ColumnDef<any>[]>(
-		() => [
-			{
-				accessorKey: 'name',
-				header: ({ column }) => <SortHeader column={column} label="Name" />,
-				cell: ({ row }) => <E2ENodeDetailsSheet instance={row.original} />,
-			},
-			{
-				accessorKey: 'status',
-				header: ({ column }) => <SortHeader column={column} label="Status" />,
-				cell: ({ row }) => <StatusBadge status={row.original.status} />,
-			},
-			{
-				accessorKey: 'location',
-				header: ({ column }) => <SortHeader column={column} label="Location" />,
-			},
-			{
-				accessorKey: 'public_ip_address',
-				header: 'Public IP',
-				cell: ({ getValue }) => (getValue() as string) || '-',
-			},
-			{
-				accessorKey: 'private_ip_address',
-				header: 'Private IP',
-				cell: ({ getValue }) => (getValue() as string) || '-',
-			},
-			{
-				accessorKey: 'plan',
-				header: 'Plan',
-				cell: ({ getValue }) => (getValue() as string) || '-',
-			},
-			{
-				id: 'owner',
-				header: 'Owner',
-				accessorFn: (row) =>
-					readTag(row, 'iv:self-service:ownership')?.owner ?? '',
-				cell: ({ getValue }) => (getValue() as string) || '-',
-			},
-			{
-				id: 'actions',
-				header: () => <div className="text-right">Actions</div>,
-				enableSorting: false,
-				cell: ({ row }) => <E2EActionButtons instance={row.original} />,
-			},
-		],
-		[],
-	)
+  return (
+    <div className="space-y-6 pb-8">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm font-medium text-muted-foreground">Infrastructure monitoring</p>
+          <h1 className="text-3xl font-bold tracking-tight">E2E Console</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Monitor E2E Network nodes across configured regions.</p>
+        </div>
+        <Button variant="outline" onClick={loadNodes} disabled={loading}>
+          {loading ? <LoaderIcon className="size-4 animate-spin" /> : <RefreshCwIcon className="size-4" />}
+          <span className="ml-2">Refresh</span>
+        </Button>
+      </div>
 
-	const table = useReactTable({
-		data,
-		columns,
-		state: { sorting, globalFilter },
-		onSortingChange: setSorting,
-		onGlobalFilterChange: setGlobalFilter,
-		getCoreRowModel: getCoreRowModel(),
-		getSortedRowModel: getSortedRowModel(),
-		getFilteredRowModel: getFilteredRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
-		initialState: { pagination: { pageSize: 15 } },
-	})
+      <DashboardCards nodes={nodes} loading={loading} />
 
-	const selectClass = 'rounded-md border bg-background px-2 py-1.5 text-sm'
+      <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+        <section className="rounded-xl border bg-card p-5 shadow-sm">
+          <div className="mb-5 flex items-center justify-between">
+            <div><h2 className="font-semibold">E2E Network</h2><p className="text-sm text-muted-foreground">Regional node health overview</p></div>
+            <ServerIcon className="size-5 text-muted-foreground" />
+          </div>
+          <div className="space-y-5">
+            {regionSummary.length === 0 ? <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">No regional data available.</div> : regionSummary.map((region) => (
+              <div key={region.name}>
+                <div className="mb-2 flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2 font-medium"><MapPinIcon className="size-4 text-muted-foreground" />{region.name}</div>
+                  <span className="text-muted-foreground">{region.healthy}/{region.total} healthy</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${region.percentage}%` }} /></div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-	return (
-		<div className="space-y-3">
-			<div className="flex flex-wrap items-center justify-between gap-2">
-				<div className="flex flex-wrap items-center gap-2">
-					<input
-						className="w-64 rounded-md border px-3 py-1.5 text-sm"
-						placeholder="Search name, IP, owner..."
-						value={globalFilter}
-						onChange={(e) => setGlobalFilter(e.target.value)}
-					/>
-					<select
-						className={selectClass}
-						value={statusFilter}
-						onChange={(e) => setStatusFilter(e.target.value)}
-					>
-						<option value="all">All statuses</option>
-						{statuses.map((s) => (
-							<option key={s} value={s}>
-								{s}
-							</option>
-						))}
-					</select>
-					<select
-						className={selectClass}
-						value={locationFilter}
-						onChange={(e) => setLocationFilter(e.target.value)}
-					>
-						<option value="all">All locations</option>
-						{locations.map((l) => (
-							<option key={l} value={l}>
-								{l}
-							</option>
-						))}
-					</select>
-				</div>
-				<Button variant="outline" size="sm" onClick={loadNodes} disabled={loading}>
-					{loading ? (
-						<LoaderIcon className="animate-spin" />
-					) : (
-						<RefreshCwIcon className="size-4" />
-					)}
-					<span className="ml-2">Refetch</span>
-				</Button>
-			</div>
+        <section className="rounded-xl border bg-card p-5 shadow-sm">
+          <h2 className="font-semibold">Environment summary</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Current state of discovered nodes</p>
+          <div className="mt-5 space-y-4">
+            {[['Running', nodes.filter(isRunning).length], ['Stopped / down', nodes.filter(isStopped).length], ['Other', nodes.filter((n) => !isRunning(n) && !isStopped(n)).length]].map(([label, value]) => (
+              <div key={String(label)} className="flex items-center justify-between rounded-lg bg-muted/50 p-3"><span className="text-sm">{label}</span><span className="font-semibold">{value}</span></div>
+            ))}
+          </div>
+        </section>
+      </div>
 
-			<div className="rounded-md border">
-				<Table>
-					<TableHeader>
-						{table.getHeaderGroups().map((hg) => (
-							<TableRow key={hg.id}>
-								{hg.headers.map((h) => (
-									<TableHead key={h.id}>
-										{h.isPlaceholder
-											? null
-											: flexRender(h.column.columnDef.header, h.getContext())}
-									</TableHead>
-								))}
-							</TableRow>
-						))}
-					</TableHeader>
-					<TableBody>
-						{loading && nodes.length === 0 ? (
-							<TableRow>
-								<TableCell colSpan={columns.length} className="h-24 text-center">
-									Loading nodes...
-								</TableCell>
-							</TableRow>
-						) : table.getRowModel().rows.length === 0 ? (
-							<TableRow>
-								<TableCell colSpan={columns.length} className="h-24 text-center">
-									No nodes found
-								</TableCell>
-							</TableRow>
-						) : (
-							table.getRowModel().rows.map((row) => (
-								<TableRow key={`${row.original.location}-${row.original.id}`}>
-									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id}>
-											{flexRender(cell.column.columnDef.cell, cell.getContext())}
-										</TableCell>
-									))}
-								</TableRow>
-							))
-						)}
-					</TableBody>
-				</Table>
-			</div>
+      <section className="rounded-xl border bg-card shadow-sm">
+        <div className="border-b p-5">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div><h2 className="font-semibold">E2E Nodes</h2><p className="text-sm text-muted-foreground">{filteredNodes.length} of {nodes.length} nodes shown</p></div>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <div className="relative"><SearchIcon className="absolute left-3 top-2.5 size-4 text-muted-foreground" /><input className="h-9 w-full rounded-md border bg-background pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-ring sm:w-64" placeholder="Search node, IP, owner..." value={search} onChange={(e) => setSearch(e.target.value)} /></div>
+              <select className="h-9 rounded-md border bg-background px-3 text-sm" value={location} onChange={(e) => setLocation(e.target.value)}><option value="all">All locations</option>{locations.map((item) => <option key={item} value={item}>{item}</option>)}</select>
+              <select className="h-9 rounded-md border bg-background px-3 text-sm" value={status} onChange={(e) => setStatus(e.target.value)}><option value="all">All statuses</option>{statuses.map((item) => <option key={item} value={item}>{item}</option>)}</select>
+            </div>
+          </div>
+        </div>
 
-			<div className="flex items-center justify-between text-sm">
-				<span className="text-muted-foreground">
-					{table.getFilteredRowModel().rows.length} node(s)
-				</span>
-				<div className="flex items-center gap-2">
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => table.previousPage()}
-						disabled={!table.getCanPreviousPage()}
-					>
-						Previous
-					</Button>
-					<span>
-						Page {table.getState().pagination.pageIndex + 1} of{' '}
-						{Math.max(table.getPageCount(), 1)}
-					</span>
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => table.nextPage()}
-						disabled={!table.getCanNextPage()}
-					>
-						Next
-					</Button>
-				</div>
-			</div>
-		</div>
-	)
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground"><tr><th className="px-5 py-3">Node</th><th className="px-5 py-3">Status</th><th className="px-5 py-3">Location</th><th className="px-5 py-3">Network</th><th className="px-5 py-3">Plan / Owner</th><th className="px-5 py-3 text-right">Actions</th></tr></thead>
+            <tbody>
+              {loading && nodes.length === 0 ? <tr><td colSpan={6} className="p-12 text-center text-muted-foreground">Loading E2E nodes...</td></tr> : filteredNodes.length === 0 ? <tr><td colSpan={6} className="p-12 text-center text-muted-foreground">No nodes match the selected filters.</td></tr> : filteredNodes.map((node) => (
+                <tr key={`${node.location}-${node.id}`} className="border-t transition-colors hover:bg-muted/30">
+                  <td className="px-5 py-4"><E2ENodeDetailsSheet instance={node} /></td>
+                  <td className="px-5 py-4"><StatusBadge status={getStatus(node)} /></td>
+                  <td className="px-5 py-4">{node.location || '-'}</td>
+                  <td className="px-5 py-4"><div className="space-y-1"><div className="font-medium">{node.public_ip_address || '-'}</div><div className="text-xs text-muted-foreground">Private: {node.private_ip_address || '-'}</div></div></td>
+                  <td className="px-5 py-4"><div className="font-medium">{node.plan || '-'}</div><div className="text-xs text-muted-foreground">{getOwner(node) || 'No owner'}</div></td>
+                  <td className="px-5 py-4"><E2EActionButtons instance={node} onComplete={loadNodes} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  )
 }
