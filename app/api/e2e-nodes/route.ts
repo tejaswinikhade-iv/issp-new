@@ -1,44 +1,96 @@
 import { NextResponse } from 'next/server'
 
 const E2E_BASE = 'https://api.e2enetworks.com/myaccount/api/v1'
-const LOCATIONS = ['Delhi', 'Mumbai'] // your E2E regions
 
-async function fetchNodes(location: string, apiKey: string, authToken: string) {
-	const nodes: any[] = []
-	let page = 1
-	let totalPages = 1
+function getLocations() {
+  return (process.env.NEXT_PUBLIC_E2E_LOCATIONS || 'Delhi,Mumbai')
+    .split(',')
+    .map((location) => location.trim())
+    .filter(Boolean)
+}
 
-	do {
-		const url = `${E2E_BASE}/nodes/?apikey=${apiKey}&location=${location}&page_no=${page}&per_page=100`
-		const res = await fetch(url, {
-			headers: { Authorization: `Bearer ${authToken}` },
-			cache: 'no-store',
-		})
-		if (!res.ok) throw new Error(`E2E ${location}: HTTP ${res.status}`)
+async function fetchNodes(location: string, apiKey: string, authToken: string, projectId?: string) {
+  const nodes: Record<string, unknown>[] = []
+  let page = 1
+  let totalPages = 1
 
-		const json = await res.json()
-		for (const n of json.data ?? []) nodes.push({ ...n, location })
-		totalPages = json.total_page_number ?? 1
-		page++
-	} while (page <= totalPages)
+  do {
+    const params = new URLSearchParams({
+      apikey: apiKey,
+      location,
+      page_no: String(page),
+      per_page: '100',
+    })
 
-	return nodes
+    if (projectId) params.set('project_id', projectId)
+
+    const response = await fetch(`${E2E_BASE}/nodes/?${params.toString()}`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        Accept: 'application/json',
+      },
+      cache: 'no-store',
+    })
+
+    const body = await response.json().catch(() => null)
+
+    if (!response.ok) {
+      const message =
+        body && typeof body === 'object' && 'message' in body
+          ? String((body as { message?: unknown }).message)
+          : `HTTP ${response.status}`
+      throw new Error(`E2E ${location}: ${message}`)
+    }
+
+    const pageNodes = Array.isArray(body?.data) ? body.data : []
+
+    for (const node of pageNodes) {
+      nodes.push({ ...(node as Record<string, unknown>), location })
+    }
+
+    totalPages = Number(body?.total_page_number || 1)
+    page += 1
+  } while (page <= totalPages)
+
+  return nodes
 }
 
 export async function GET() {
-	const apiKey = process.env.E2E_API_KEY
-	const authToken = process.env.E2E_AUTH_TOKEN
-	if (!apiKey || !authToken)
-		return NextResponse.json({ error: 'Server not configured' }, { status: 500 })
+  const apiKey = process.env.E2E_KEY || process.env.E2E_API_KEY
+  const authToken = process.env.E2E_TOKEN || process.env.E2E_AUTH_TOKEN
+  const projectId = process.env.E2E_PROJECT_ID
 
-	const results = await Promise.allSettled(
-		LOCATIONS.map((loc) => fetchNodes(loc, apiKey, authToken)),
-	)
+  if (!apiKey || !authToken) {
+    return NextResponse.json(
+      {
+        error: 'E2E API credentials are not configured',
+        nodes: [],
+      },
+      { status: 500 },
+    )
+  }
 
-	const nodes = results.flatMap((r) => (r.status === 'fulfilled' ? r.value : []))
-	const errors = results
-		.map((r, i) => (r.status === 'rejected' ? `${LOCATIONS[i]}: ${r.reason.message}` : null))
-		.filter(Boolean)
+  const locations = getLocations()
 
-	return NextResponse.json({ nodes, errors })
+  const results = await Promise.allSettled(
+    locations.map((location) => fetchNodes(location, apiKey, authToken, projectId)),
+  )
+
+  const nodes = results.flatMap((result) =>
+    result.status === 'fulfilled' ? result.value : [],
+  )
+
+  const errors = results
+    .map((result, index) =>
+      result.status === 'rejected'
+        ? `${locations[index]}: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`
+        : null,
+    )
+    .filter((value): value is string => Boolean(value))
+
+  return NextResponse.json({
+    nodes,
+    errors,
+    fetchedAt: new Date().toISOString(),
+  })
 }

@@ -1,6 +1,6 @@
 services:
   e2e-vm-listing:
-    image: e2e-vm-listing:latest
+    image: issp:1.0.0
     container_name: e2e-vm-listing
 
     ports:
