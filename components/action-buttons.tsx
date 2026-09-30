@@ -1,81 +1,54 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client'
 
 import { Button } from '@/components/ui/button'
 import { LoaderIcon, PauseIcon, PlayIcon, RotateCcwIcon } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import type { E2ENode } from '@/lib/e2e-types'
 
 type Action = 'start' | 'stop' | 'reboot'
 
-export default function E2EActionButtons({ instance }: { instance: any }) {
-	const [pendingActions, setPendingActions] = useState<Set<string>>(new Set())
+export default function E2EActionButtons({ instance, onComplete }: { instance: E2ENode; onComplete?: () => void }) {
+  const [pending, setPending] = useState<Action | null>(null)
 
-	// Adjust to match the fields your E2E node list returns
-	const nodeId = instance.id
-	const location = instance.location // e.g. "Delhi", "Mumbai"
-	const displayName = instance.name || nodeId
+  async function handleAction(action: Action) {
+    if (!instance.id || !instance.location) {
+      toast.error('Node ID and location are required.')
+      return
+    }
 
-	async function handleAction(action: Action) {
-		setPendingActions((prev) => new Set(prev).add(action))
+    setPending(action)
+    try {
+      const response = await fetch('/api/e2e-action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, nodeId: instance.id, location: instance.location }),
+      })
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`)
+      toast.success(`${action[0].toUpperCase() + action.slice(1)} requested`, { description: instance.name || instance.id })
+      onComplete?.()
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : `Unable to ${action} node`)
+    } finally {
+      setPending(null)
+    }
+  }
 
-		try {
-			if (!nodeId || !location)
-				throw new Error('Node ID and location are required.')
+  const actions: { action: Action; Icon: typeof PlayIcon; label: string }[] = [
+    { action: 'start', Icon: PlayIcon, label: 'Start' },
+    { action: 'stop', Icon: PauseIcon, label: 'Stop' },
+    { action: 'reboot', Icon: RotateCcwIcon, label: 'Reboot' },
+  ]
 
-			const response = await fetch('/api/e2e-action', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ action, nodeId, location }),
-			})
-
-			const data = await response.json()
-			if (!response.ok)
-				throw new Error(
-					data.error || `Request failed with status ${response.status}`,
-				)
-
-			toast.success(`Initiated ${action} for ${displayName}`, {
-				description: 'Refetch to see changes',
-			})
-			return data
-		} catch (error) {
-			toast.error(
-				error instanceof Error
-					? error.message
-					: `Unexpected error during ${action} for ${displayName}`,
-			)
-		} finally {
-			setPendingActions((prev) => {
-				const next = new Set(prev)
-				next.delete(action)
-				return next
-			})
-		}
-	}
-
-	const buttons: { action: Action; Icon: any }[] = [
-		{ action: 'start', Icon: PlayIcon },
-		{ action: 'stop', Icon: PauseIcon },
-		{ action: 'reboot', Icon: RotateCcwIcon },
-	]
-
-	return (
-		<div className="inline-flex w-full items-center justify-end">
-			{buttons.map(({ action, Icon }) => (
-				<Button
-					key={action}
-					variant="ghost"
-					size="icon"
-					disabled={pendingActions.has(action)}
-					onClick={() => handleAction(action)}
-				>
-					{pendingActions.has(action) ? (
-						<LoaderIcon className="animate-spin" />
-					) : (
-						<Icon className="size-4" />
-					)}
-				</Button>
-			))}
-		</div>
-	)
+  return (
+    <div className="flex items-center justify-end gap-1">
+      {actions.map(({ action, Icon, label }) => (
+        <Button key={action} variant="ghost" size="icon" className="size-8" title={label} disabled={pending !== null} onClick={() => handleAction(action)}>
+          {pending === action ? <LoaderIcon className="size-4 animate-spin" /> : <Icon className="size-4" />}
+          <span className="sr-only">{label}</span>
+        </Button>
+      ))}
+    </div>
+  )
 }
