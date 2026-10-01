@@ -23,7 +23,6 @@ export default function Home() {
         if (active) setMounted(true)
       }
     }
-
     initialize()
     return () => { active = false }
   }, [setConfig])
