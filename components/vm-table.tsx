@@ -1,6 +1,6 @@
 'use client'
 
-// import DashboardCards from './dashboard-cards'
+import DashboardCards from './dashboard-cards'
 import E2EActionButtons from './action-buttons'
 import E2ENodeDetailsSheet from './e2e-node-details-sheet'
 import { Button } from '@/components/ui/button'
