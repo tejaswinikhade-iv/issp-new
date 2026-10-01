@@ -6,6 +6,7 @@ import { UserInfoContextProvider } from '@/hooks/use-user-info'
 // import { GoogleOAuthProvider } from '@react-oauth/google'
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+
 import './globals.css'
 
 const geistSans = Geist({
