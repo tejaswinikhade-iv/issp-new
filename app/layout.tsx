@@ -43,8 +43,7 @@ export default function RootLayout({
 						<ConfigContextProvider>
 							<UserInfoContextProvider>
 								<Navbar />
-								<main className="flex h-full flex-col overflow-hidden">
-									<div className="mx-auto max-w-7xl p-4 sm:p-6">
+								<main className="min-h-0 flex-1 overflow-y-auto"><div className="mx-auto max-w-7xl p-4 sm:p-6">
 									{children}
 									<Toaster richColors />
 								</div></main>
