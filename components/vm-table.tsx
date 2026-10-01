@@ -63,18 +63,18 @@ export default function VMTable() {
   }), [locations, nodes])
 
   return (
-    // <div className="space-y-6 pb-8">
-    //   <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-    //     <div>
-    //       <p className="text-sm font-medium text-muted-foreground">Infrastructure monitoring</p>
-    //       <h1 className="text-3xl font-bold tracking-tight">E2E Console</h1>
-    //       <p className="mt-1 text-sm text-muted-foreground">Monitor E2E Network nodes across configured regions.</p>
-    //     </div>
-    //     <Button variant="outline" onClick={loadNodes} disabled={loading}>
-    //       {loading ? <LoaderIcon className="size-4 animate-spin" /> : <RefreshCwIcon className="size-4" />}
-    //       <span className="ml-2">Refresh</span>
-    //     </Button>
-    //   </div>
+    <div className="space-y-6 pb-8">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        {/* <div>
+          <p className="text-sm font-medium text-muted-foreground">Infrastructure monitoring</p>
+          <h1 className="text-3xl font-bold tracking-tight">E2E Console</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Monitor E2E Network nodes across configured regions.</p>
+        </div> */}
+        {/* <Button variant="outline" onClick={loadNodes} disabled={loading}>
+          {loading ? <LoaderIcon className="size-4 animate-spin" /> : <RefreshCwIcon className="size-4" />}
+          <span className="ml-2">Refresh</span>
+        </Button> */}
+      </div>
 
       <DashboardCards nodes={nodes} loading={loading} />
 
