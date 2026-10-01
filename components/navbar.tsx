@@ -1,6 +1,6 @@
 'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -12,13 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
-
-import {
-  ChevronDownIcon,
-  ServerIcon,
-  SettingsIcon,
-} from 'lucide-react'
-
+import { ChevronDownIcon, ServerIcon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -32,17 +26,20 @@ export default function Navbar() {
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href)
 
+  const linkClass = (href: string) =>
+    `rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+      isActive(href)
+        ? 'bg-muted text-foreground'
+        : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'
+    }`
+
   return (
     <nav>
       <div className="flex items-center justify-between gap-4 p-2">
-
-        {/* Left Section */}
-
         <div className="flex items-center gap-6">
-
           <Link
             href="/"
-lassName="h-5 w-5" />
+            class" />
 
             <p className="hidden text-xl font-semibold tracking-tight sm:inline">
               E2E Console
@@ -58,27 +55,19 @@ lassName="h-5 w-5" />
               <Link
                 key={item.href}
                 href={item.href}
-                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                  isActive(item.href)
-                    ? 'bg-muted text-foreground'
-                    : 'text-muted
-
-        {/* Right Section */}
+    k>
+            ))}
+          </div>
+        </div>
 
         <DropdownMenu>
-
           <DropdownMenuTrigger asChild>
-
             <Button
               variant="ghost"
-              className="has-[>svg]:p-2""
+              className="has-[>svg\]:p-2"
             >
               <Avatar className="size-7">
-                <AvatarImage />
-
-                <AvatarFallback>
-                  TK
-                </AvatarFallback>
+                <AvatarFallback>TK</AvatarFallback>
               </Avatar>
 
               <span className="hidden sm:inline">
@@ -87,7 +76,6 @@ lassName="h-5 w-5" />
 
               <ChevronDownIcon className="size-4" />
             </Button>
-
           </DropdownMenuTrigger>
 
           <DropdownMenuContent
@@ -101,7 +89,6 @@ lassName="h-5 w-5" />
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-
               <DropdownMenuItem>
                 Profile
               </DropdownMenuItem>
@@ -109,7 +96,6 @@ lassName="h-5 w-5" />
               <DropdownMenuItem>
                 Preferences
               </DropdownMenuItem>
-
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />
@@ -117,14 +103,10 @@ lassName="h-5 w-5" />
             <DropdownMenuItem>
               Logout
             </DropdownMenuItem>
-
           </DropdownMenuContent>
-
         </DropdownMenu>
-
       </div>
 
       <Separator />
     </nav>
-  )
-}
+ 
