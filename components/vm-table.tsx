@@ -64,26 +64,15 @@ export default function VMTable() {
 
   return (
     <div className="space-y-6 pb-8">
-      {/* <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"> */}
-        {/* <div>
-          <p className="text-sm font-medium text-muted-foreground">Infrastructure monitoring</p>
-          <h1 className="text-3xl font-bold tracking-tight">E2E Console</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Monitor E2E Network nodes across configured regions.</p>
-        </div> */}
-        {/* <Button variant="outline" onClick={loadNodes} disabled={loading}>
-          {loading ? <LoaderIcon className="size-4 animate-spin" /> : <RefreshCwIcon className="size-4" />}
-          <span className="ml-2">Refresh</span>
-        </Button> */}
-      {/* </div> */}
-
+      
       <DashboardCards nodes={nodes} loading={loading} />
 
       <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
         <section className="rounded-xl border bg-card p-5 shadow-sm">
-          <div className="mb-5 flex items-center justify-between">
+          {/* <div className="mb-5 flex items-center justify-between">
             <div><h2 className="font-semibold">E2E Network</h2><p className="text-sm text-muted-foreground">Regional node health overview</p></div>
             <ServerIcon className="size-5 text-muted-foreground" />
-          </div>
+          </div> */}
           <div className="space-y-5">
             {regionSummary.length === 0 ? <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">No regional data available.</div> : regionSummary.map((region) => (
               <div key={region.name}>
