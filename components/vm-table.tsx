@@ -234,23 +234,23 @@ export default function VMTable() {
 
             <tr className="border-b border-zinc-800">
 
-              <th className="px-5 py-4 font-semibold">
+              <th className="px-5 py-4 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 Name
               </th>
 
-              <th className="px-5 py-4 font-semibold">
+              <th className="px-5 py-4 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 State
               </th>
 
-              <th className="px-5 py-4 font-semibold">
+              <th className="px-5 py-4 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 Public IP
               </th>
 
-              <th className="px-5 py-4 font-semibold">
+              <th className="px-5 py-4 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 Location
               </th>
 
-              <th className="px-5 py-4 font-semibold">
+              <th className="px-5 py-4 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 Owner
               </th>
 
@@ -314,7 +314,7 @@ export default function VMTable() {
 
                 <td className="px-5 py-4">
                   <div>
-                    <div className="font-medium">
+                    <div className="font-semibold tracking-tight">
                       {getOwner(node) ||
                         'No Owner'}
                     </div>

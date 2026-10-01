@@ -29,9 +29,9 @@ export default function RootLayout({
 	children: React.ReactNode
 }>) {
 	return (
-		<html lang="en" suppressHydrationWarning>
+		<html lang="en">
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} flex h-dvh flex-col overflow-hidden antialiased`}
+				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
 				{/* <GoogleOAuthProvider clientId="81716575026-bm17q8jeuq8mlafbpokp87g8c06h22im.apps.googleusercontent.com"> */}
 					<ThemeProvider
