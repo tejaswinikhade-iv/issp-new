@@ -31,10 +31,12 @@ export default function Navbar() {
 		<header className="bg-background sticky top-0 z-50 w-full border-b">
 			<nav className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
 				{/* Brand */}
-				<Link href="/" className="flex items-center gap-2 font-semibold">
-					<ServerIcon className="size-5" />
-					<span>E2E Console</span>
-				</Link>
+				<div className="flex items-center gap-3">
+				<ServerIcon className="h-5 w-5" />
+				<span className="text-xl font-semibold tracking-tight">
+				E2E Console
+				</span>
+				</div>
 
 				{/* Desktop links */}
 				<div className="hidden items-center gap-1 md:flex">
