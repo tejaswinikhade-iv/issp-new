@@ -36,6 +36,7 @@ export default function Navbar() {
   return (
     <nav>
       <div className="flex items-center justify-between gap-4 p-2">
+        {/* Left Side */}
         <div className="flex items-center gap-6">
           /
             <ServerIcon className="h-5 w-5" />
@@ -58,6 +59,7 @@ export default function Navbar() {
           </div>
         </div>
 
+        {/* Right Side */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -102,10 +104,10 @@ export default function Navbar() {
               Logout
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+       </DropdownMenu>
       </div>
 
       <Separator />
     </nav>
- )
+  )
 }
