@@ -106,7 +106,5 @@ export default function Navbar() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-
       <Separator />
     </nav>
- 
