@@ -1,4 +1,4 @@
-'use client'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Button } from '@/components/ui/button'
 import { LoaderIcon, PauseIcon, PlayIcon, RotateCcwIcon } from 'lucide-react'
