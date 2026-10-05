@@ -24,7 +24,9 @@ export default function Navbar() {
   const pathname = usePathname()
 
   const isActive = (href: string) =>
-    href === '/' ? pathname === '/' : pathname.startsWith(href)
+    href === '/'
+      ? pathname === '/'
+      : pathname.startsWith(href)
 
   const linkClass = (href: string) =>
     `rounded-md px-3 py-2 text-sm font-medium transition-colors ${
@@ -37,9 +39,8 @@ export default function Navbar() {
     <nav>
       <div className="flex items-center justify-between gap-4 p-2">
         <div className="flex items-center gap-6">
-          <Link
-            href="/"
-            class" />
+          /
+            <ServerIcon className="h-5 w-5" />
 
             <p className="hidden text-xl font-semibold tracking-tight sm:inline">
               E2E Console
@@ -52,10 +53,9 @@ export default function Navbar() {
 
           <div className="hidden items-center gap-1 md:flex">
             {NAV_LINKS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-    k>
+              {item.href}              >
+                {item.label}
+              </Link>
             ))}
           </div>
         </div>
@@ -106,5 +106,8 @@ export default function Navbar() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
       <Separator />
     </nav>
+ )
+}
