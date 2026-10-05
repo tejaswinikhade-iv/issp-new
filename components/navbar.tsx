@@ -38,8 +38,9 @@ export default function Navbar() {
       <div className="flex items-center justify-between gap-4 p-2">
         {/* Left Side */}
         <div className="flex items-center gap-6">
-          /
-            <ServerIcon className="h-5 w-5" />
+          <Link
+            href="/"
+            5 w-5" />
 
             <p className="hidden text-xl font-semibold tracking-tight sm:inline">
               E2E Console
@@ -57,6 +58,7 @@ export default function Navbar() {
               </Link>
             ))}
           </div>
+        </div>
         </div>
 
         {/* Right Side */}
