@@ -61,7 +61,7 @@ export default function Navbar() {
                                         <p className="text-xl font-semibold sm:hidden">ISSP</p>
                                 </Link>
                                 <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
+                                    <DropdownMenuTrigger asChild>
                                                 {userInfo ? (
                                                         <Button variant="ghost" className="has-[>svg]:p-2">
                                                                 <Avatar className="size-6">
@@ -75,7 +75,7 @@ export default function Navbar() {
                                                                                         .join('')}
                                                                         </AvatarFallback>
                                                                 </Avatar>
-                                                                {/* <span>{userInfo.name}</span> */}
+                                                                <span>{userInfo.name}</span> 
                                                                 <ChevronDownIcon />
                                                         </Button>
                                                 ) : (
@@ -84,11 +84,11 @@ export default function Navbar() {
                                                         </Button>
                                                 )}
                                         </DropdownMenuTrigger>
-                                        {/* <DropdownMenuContent className="mx-2 w-56" align="center">
+                                        <DropdownMenuContent className="mx-2 w-56" align="center">
                                                 <DropdownMenuLabel>Settings</DropdownMenuLabel>
                                                 <DropdownMenuSeparator />
                                                 <DropdownMenuGroup>
-                                                        {/* <DropdownMenuItem
+                                                        <DropdownMenuItem
                                                                 onClick={(e) => e.preventDefault()}
                                                         >
                                                                 <ThemeSwitch />
@@ -103,11 +103,11 @@ export default function Navbar() {
                                                         </DropdownMenuItem>
                                                         <DropdownMenuItem onClick={handleLogout}>
                                                                 Log out
-                                                        </DropdownMenuItem> */}
+                                                        </DropdownMenuItem>
                                                 </DropdownMenuGroup>
                                                 <DropdownMenuSeparator />
                                                 <DropdownMenuGroup>
-                                                        {/* <DropdownMenuItem asChild>
+                                                        <DropdownMenuItem asChild>
                                                                 <Link
                                                                         href="https://bitbucket.org/inspiritvision/infra-self-service-portal/"
                                                                         target="_blank"
@@ -122,9 +122,9 @@ export default function Navbar() {
                                                                 >
                                                                         Documentation
                                                                 </Link>
-                                                        </DropdownMenuItem> */}
+                                                        </DropdownMenuItem>
                                                 </DropdownMenuGroup>
-                                        </DropdownMenuContent> 
+                                        </DropdownMenuContent>  
                                 </DropdownMenu>
                         </div>
                         <Separator />
