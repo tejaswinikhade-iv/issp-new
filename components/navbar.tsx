@@ -60,7 +60,7 @@ export default function Navbar() {
                                         </p>
                                         <p className="text-xl font-semibold sm:hidden">ISSP</p>
                                 </Link>
-                                <DropdownMenu>
+                                {/* <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                                 {userInfo ? (
                                                         <Button variant="ghost" className="has-[>svg]:p-2">
@@ -125,7 +125,7 @@ export default function Navbar() {
                                                         </DropdownMenuItem>
                                                 </DropdownMenuGroup>
                                         </DropdownMenuContent>  
-                                </DropdownMenu>
+                                </DropdownMenu> */}
                         </div>
                         <Separator />
                 </nav>
