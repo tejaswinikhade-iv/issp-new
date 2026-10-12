@@ -42,7 +42,6 @@ function ThemeSwitch() {
                 </div>
         )
 }
-
 export default function Navbar() {
         return (
                 <nav>
