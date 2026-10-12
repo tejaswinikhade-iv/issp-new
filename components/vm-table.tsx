@@ -2,50 +2,11 @@
 
 import E2EActionButtons from './action-buttons'
 import E2ENodeDetailsSheet from './e2e-node-details-sheet'
-import LoadingScreen from '@/loading-screen'
-import { StateBadge, UserBadge } from '@/table-badges'
 import { Button } from '@/components/ui/button'
 import {
   RefreshCwIcon,
   SearchIcon,
   LoaderIcon,
-  DropdownMenu,
-	DropdownMenuCheckboxItem,
-	DropdownMenuContent,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select'
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from '@/components/ui/table'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-	findTag,
-	formatDate,
-	getPermissions,
-	isMobile,
-	sortInstances,
-} from '@/lib/utils'
-import {
-	ArrowDownWideNarrowIcon,
-	ChevronDownIcon,
-	ColumnsIcon,
-	FunnelIcon,
-	GlobeIcon,
-	RotateCwIcon,
 } from 'lucide-react'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -79,21 +40,14 @@ function StatusBadge({ status }: { status: string }) {
     </span>
   )
 }
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export default function VMTable() {
   const [nodes, setNodes] = useState<E2ENode[]>([])
   const [loading, setLoading] = useState(true)
-  ////
-  const { config } = useConfig()
-	const { userInfo } = useUserInfo()
-  ////
+
   const [search, setSearch] = useState('')
   const [location, setLocation] = useState('all')
   const [status, setStatus] = useState('all')
-  ////
-  const [selectedProfile, setSelectedProfile] = useState('')
-	const [selectedRegion, setSelectedRegion] = useState('')
-  ////
 
   const loadNodes = useCallback(async () => {
     setLoading(true)
@@ -192,39 +146,31 @@ export default function VMTable() {
       )
     })
   }, [nodes, search, location, status])
+
   return (
     <div className="space-y-5">
+
       {/* Toolbar */}
-      <div className="flex h-full flex-col gap-4 overflow-y-scroll p-4">
+
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+
         <div className="flex flex-wrap items-center gap-3">
+
           <select
-            value={selectedRegion}
-						onValueChange={setSelectedRegion}
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="h-10 rounded-md border border-zinc-700 bg-background px-3 text-sm"
           >
-            <SelectTrigger className="hover:bg-accent">
-							<GlobeIcon />
-							<SelectValue placeholder="Region" />
-						</SelectTrigger>
-<SelectContent>
-							<SelectGroup>
-								<SelectLabel>Regions</SelectLabel>
-								{config.profiles[selectedProfile]?.regions.map(
-									(region: string) => {
-										return (
-											<SelectItem
-												key={region}
-												value={region}
-											>
-												{region}
-											</SelectItem>
-										)
-									},
-								)}
-							</SelectGroup>
-						</SelectContent>
+            <option value="all">All Regions</option>
+
+            {locations.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
           </select>
+
           <Button
-            className="hidden shadow-xs sm:inline-flex"
             variant="outline"
             onClick={loadNodes}
             disabled={loading}
@@ -236,7 +182,9 @@ export default function VMTable() {
             )}
             Refresh
           </Button>
+
         </div>
+
         <div className="flex flex-wrap items-center gap-3">
 
           <div className="relative">
