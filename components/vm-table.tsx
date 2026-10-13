@@ -174,7 +174,7 @@ export default function VMTable() {
             className="hidden shadow-xs sm:inline-flex"
             variant="outline"
             onClick={loadNodes}
-            // disabled={loading}
+            disabled={loading}
           >
             <RotateCwIcon className="text-muted-foreground" />
             {/* {loading ? (
