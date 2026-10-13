@@ -35,7 +35,7 @@ function StatusBadge({ status }: { status: string }) {
           : 'border-zinc-600 bg-zinc-800 text-zinc-300'
       }`}
     >
-      <span className="size-2 rounded-full bg-current" />
+      <span className="size-2 rounded-sm bg-current" />
       {status || 'Unknown'}
     </span>
   )
@@ -275,7 +275,7 @@ export default function VMTable() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="p-10 text-center text-muted-foreground"
+                    className="p-8 text-center text-muted-foreground"
                   >
                     No nodes found
                   </td>
@@ -300,9 +300,6 @@ export default function VMTable() {
                 <td className="px-5 py-4">
                   {node.public_ip_address || '-'}
                 </td>
-                {/* <td className="px-5 py-4">
-                  {node.location || '-'}
-                </td> */}
                 <td className="px-5 py-4">
                   <div>
                     <div className="font-semibold tracking-tight">
