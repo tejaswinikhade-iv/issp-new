@@ -159,7 +159,7 @@ export default function VMTable() {
           <select
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="h-10 rounded-md border border-zinc-700 bg-background px-3 text-sm"
+            className="h-10 rounded-md border border-zinc-700 bg-background px-3 text-xs"
           >
             <option value="all">All Regions</option>
 
