@@ -304,9 +304,9 @@ export default function VMTable() {
                 <td className="px-5 py-4">
                   {node.public_ip_address || '-'}
                 </td>
-                <td className="px-5 py-4">
+                {/* <td className="px-5 py-4">
                   {node.location || '-'}
-                </td>
+                </td> */}
                 <td className="px-5 py-4">
                   <div>
                     <div className="font-semibold tracking-tight">
@@ -314,9 +314,7 @@ export default function VMTable() {
                         'No Owner'}
                     </div>
 
-                    {/* <div className="text-xs text-muted-foreground">
-                      {node.plan || '-'}
-                    </div> */}
+  
                   </div>
                 </td>
                 <td className="px-5 py-4 text-right">
