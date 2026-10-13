@@ -246,10 +246,6 @@ export default function VMTable() {
               </th>
 
               <th className="px-5 py-4 text-sm font-medium font-semibold text-muted-foreground">
-                Location
-              </th>
-
-              <th className="px-5 py-4 text-sm font-medium font-semibold text-muted-foreground">
                 Owner
               </th>
 
