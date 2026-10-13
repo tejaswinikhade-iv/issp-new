@@ -227,7 +227,7 @@ export default function VMTable() {
 
       <div className="overflow-hidden rounded-xl border border-zinc-800 bg-card">
 
-        <table className="w-full text-sm">
+        <table className="w-full text-xs">
 
           <thead className="bg-muted/20 text-left">
 
