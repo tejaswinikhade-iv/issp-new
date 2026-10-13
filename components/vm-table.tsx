@@ -27,7 +27,7 @@ function StatusBadge({ status }: { status: string }) {
 
   return (
     <span
-      className={`inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-xs font-medium ${
+      className={`inline-flex items-center gap-2 rounded-sm border px-2.5 py-1 text-xs font-medium ${
         running
           ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
           : stopped
