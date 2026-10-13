@@ -148,7 +148,7 @@ export default function VMTable() {
   }, [nodes, search, location, status])
 
   return (
-    <div className="space-y-5 p-4">
+    <div className="flex h-full flex-col gap-4 overflow-y-scroll p-4">
 
       {/* Toolbar */}
 
