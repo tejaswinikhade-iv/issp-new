@@ -263,7 +263,7 @@ export default function VMTable() {
               <tr>
                 <td
                   colSpan={6}
-                  className="p-10 text-center text-muted-foreground"
+                  className="p-8 text-center text-muted-foreground"
                 >
                   Loading E2E nodes...
                 </td>
