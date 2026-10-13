@@ -176,11 +176,12 @@ export default function VMTable() {
             onClick={loadNodes}
             // disabled={loading}
           >
-            {loading ? (
+            <RotateCwIcon className="text-muted-foreground" />
+            {/* {loading ? (
               <LoaderIcon className="mr-2 size-4 animate-spin" />
             ) : (
               <RefreshCwIcon className="mr-2 size-4" />
-            )}
+            )} */}
             Refresh
           </Button>
 
