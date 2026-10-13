@@ -148,7 +148,7 @@ export default function VMTable() {
   }, [nodes, search, location, status])
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 p-4">
 
       {/* Toolbar */}
 
@@ -296,21 +296,17 @@ export default function VMTable() {
                     instance={node}
                   />
                 </td>
-
                 <td className="px-5 py-4">
                   <StatusBadge
                     status={getStatus(node)}
                   />
                 </td>
-
                 <td className="px-5 py-4">
                   {node.public_ip_address || '-'}
                 </td>
-
                 <td className="px-5 py-4">
                   {node.location || '-'}
                 </td>
-
                 <td className="px-5 py-4">
                   <div>
                     <div className="font-semibold tracking-tight">
@@ -323,7 +319,6 @@ export default function VMTable() {
                     </div>
                   </div>
                 </td>
-
                 <td className="px-5 py-4 text-right">
                   <E2EActionButtons
                     instance={node}
@@ -332,13 +327,9 @@ export default function VMTable() {
                 </td>
               </tr>
             ))}
-
           </tbody>
-
         </table>
-
       </div>
-
     </div>
   )
 }
