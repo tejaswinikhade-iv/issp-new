@@ -171,16 +171,13 @@ export default function VMTable() {
           </select>
 
           <Button
+            className="hidden shadow-xs sm:inline-flex"
             variant="outline"
             onClick={loadNodes}
-            disabled={loading}
+            // disabled={loading}
           >
-            {loading ? (
-              <LoaderIcon className="mr-2 size-4 animate-spin" />
-            ) : (
-              <RefreshCwIcon className="mr-2 size-4" />
-            )}
-            Refresh
+          <RotateCwIcon className="text-muted-foreground" />
+						<span>Refetch</span>
           </Button>
 
         </div>
