@@ -4,9 +4,9 @@ import E2EActionButtons from './action-buttons'
 import E2ENodeDetailsSheet from './e2e-node-details-sheet'
 import { Button } from '@/components/ui/button'
 import {
-  RefreshCwIcon,
+  // RefreshCwIcon,
   SearchIcon,
-  LoaderIcon,
+  // LoaderIcon,
 } from 'lucide-react'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -176,11 +176,12 @@ export default function VMTable() {
             onClick={loadNodes}
             disabled={loading}
           >
-            {loading ? (
+            <RotateCwIcon className="text-muted-foreground" />
+            {/* {loading ? (
               <LoaderIcon className="mr-2 size-4 animate-spin" />
             ) : (
               <RefreshCwIcon className="mr-2 size-4" />
-            )}
+            )} */}
             Refresh
           </Button>
 
