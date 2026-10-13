@@ -233,23 +233,23 @@ export default function VMTable() {
 
             <tr className="border-b border-zinc-800">
 
-              <th className="px-5 py-4 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <th className="px-5 py-4 text-xs font-medium text-muted-foreground">
                 Name
               </th>
 
-              <th className="px-5 py-4 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <th className="px-5 py-4 text-xs font-medium font-semibold text-muted-foreground">
                 State
               </th>
 
-              <th className="px-5 py-4 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <th className="px-5 py-4 text-xs font-medium font-semibold text-muted-foreground">
                 Public IP
               </th>
 
-              <th className="px-5 py-4 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <th className="px-5 py-4 text-xs font-medium font-semibold text-muted-foreground">
                 Location
               </th>
 
-              <th className="px-5 py-4 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <th className="px-5 py-4 text-xs font-medium font-semibold text-muted-foreground">
                 Owner
               </th>
 
