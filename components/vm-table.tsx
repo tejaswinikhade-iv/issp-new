@@ -3,12 +3,12 @@
 import E2EActionButtons from './action-buttons'
 import E2ENodeDetailsSheet from './e2e-node-details-sheet'
 import { Button } from '@/components/ui/button'
-import {
-  // RefreshCwIcon,
-  // SearchIcon,
-  // LoaderIcon,
-  RotateCwIcon,
-} from 'lucide-react'
+// import {
+//   // RefreshCwIcon,
+//   // SearchIcon,
+//   // LoaderIcon,
+//   RotateCwIcon,
+// } from 'lucide-react'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
@@ -45,11 +45,9 @@ function StatusBadge({ status }: { status: string }) {
 export default function VMTable() {
   const [nodes, setNodes] = useState<E2ENode[]>([])
   const [loading, setLoading] = useState(true)
-
   const [search, setSearch] = useState('')
   const [location, setLocation] = useState('all')
   const [status, setStatus] = useState('all')
-
   const loadNodes = useCallback(async () => {
     setLoading(true)
 
@@ -177,7 +175,7 @@ export default function VMTable() {
             onClick={loadNodes}
             disabled={loading}
           >
-            <RotateCwIcon className="text-muted-foreground" />
+            {/* <RotateCwIcon className="text-muted-foreground" /> */}
             {/* {loading ? (
               <LoaderIcon className="mr-2 size-4 animate-spin" />
             ) : (
