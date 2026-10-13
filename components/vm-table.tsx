@@ -314,9 +314,9 @@ export default function VMTable() {
                         'No Owner'}
                     </div>
 
-                    <div className="text-xs text-muted-foreground">
+                    {/* <div className="text-xs text-muted-foreground">
                       {node.plan || '-'}
-                    </div>
+                    </div> */}
                   </div>
                 </td>
                 <td className="px-5 py-4 text-right">
